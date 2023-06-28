@@ -1,21 +1,14 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#define OUT_OF_MEMORY "Chyba: Nepodarilo pridelit pamat"
-#define ANO "SAMOPRIESEK_ANO"
-#define NIE "SAMOPRIESEK_NIE"
+#define OUT_OF_MEMORY -1
+#define SAMOPRIESEK_ANO 'a'
+#define SAMOPRIESEK_NIE 'n'
 
 //Linka na overenie suradnic(len nie spojene zaciatocny a koncovy bod)
 //https://www.dcode.fr/points-plotter
 
-#define WHAT "what?"
-
-char* what()
-{
-	return WHAT;
-}
-
-char* uholnik_testuj_samoprieseky(float* x, float* y, unsigned int n) {
+char uholnik_testuj_samoprieseky(float* x, float* y, unsigned int n) {
 	int i, j;
 	float A1, B1, C1, A2, B2, C2, determinant;
 	//špeciálny prípad, keď máme stranu definovanú počiatočným a koncovým bodom
@@ -28,7 +21,7 @@ char* uholnik_testuj_samoprieseky(float* x, float* y, unsigned int n) {
 		B2 = x[i] - x[i + 1];
 		C2 = A1 * x[i] + B1 * y[i]; //rovnica typu A2y + B2x = C2
 		determinant = A1 * B2 - A2 * B1;
-		if (determinant == 0) { printf("Strana %i rovnobezna zo stranou %i!\n", i + 1, i + 2); continue; } //sú rovnobežné strany n-uholníka
+		if (determinant == 0) { printf("Strana %i rovnobezna zo strSAMOPRIESEK_ANOu %i!\n", i + 1, i + 2); continue; } //sú rovnobežné strany n-uholníka
 		float px = (B2 * C1 - B1 * C2) / determinant;
 		float py = (A1 * C2 - A2 * C1) / determinant; //súradnice priesečníka priamok v prípade, že sú nekonečné
 
@@ -41,7 +34,7 @@ char* uholnik_testuj_samoprieseky(float* x, float* y, unsigned int n) {
 
 		if (((vzd_xA >= 0 && vzd_xA <= 1) || (vzd_yA >= 0 && vzd_yA <= 1)) &&
 			((vzd_xB >= 0 && vzd_xB <= 1) || (vzd_yB >= 0 && vzd_yB <= 1))) {
-			return ANO;
+			return SAMOPRIESEK_ANO;
 		}
 	}
 
@@ -56,7 +49,7 @@ char* uholnik_testuj_samoprieseky(float* x, float* y, unsigned int n) {
 			B2 = x[j] - x[j + 1];
 			C2 = A2 * x[j] + B2 * y[j]; //rovnica typu A2y + B2x = C2
 			determinant = A1 * B2 - A2 * B1;
-			if (determinant == 0) { printf("Strana %i rovnobezna zo stranou %i!\n", i + 1, i + 2); continue; } //sú rovnobežné strany n-uholníka
+			if (determinant == 0) { printf("Strana %i rovnobezna zo strSAMOPRIESEK_ANOu %i!\n", i + 1, i + 2); continue; } //sú rovnobežné strany n-uholníka
 			float px = (B2 * C1 - B1 * C2) / determinant;
 			float py = (A1 * C2 - A2 * C1) / determinant; //suradnice priesecnika priamok v pripade, ze su nekonecne
 
@@ -69,14 +62,14 @@ char* uholnik_testuj_samoprieseky(float* x, float* y, unsigned int n) {
 
 			if (((vzd_xA >= 0 && vzd_xA <= 1) || (vzd_yA >= 0 && vzd_yA <= 1)) &&
 				((vzd_xB >= 0 && vzd_xB <= 1) || (vzd_yB >= 0 && vzd_yB <= 1))) {
-				return ANO;
+				return SAMOPRIESEK_ANO;
 			}
 		}
 	}
-	return NIE;
+	return SAMOPRIESEK_NIE;
 }
 
-char* nuholnik(int n, float** x, float** y) { //funkcia generovania suradnic
+int nuholnik(int n, float** x, float** y) { //funkcia generovania suradnic
 	*y = (float*)malloc(n * sizeof(float));
 	if (y == NULL)
 	{
@@ -121,18 +114,19 @@ int main() {
 	int i = 0;
 	printf("Kolko vrcholov ma n-uholnik? -> ");
 	scanf("%i", &n); // Zapis velkosti n-uholnika
-	char *chyba = nuholnik(n, &x, &y);
+	int chyba = nuholnik(n, &x, &y);
 	if (chyba == OUT_OF_MEMORY)
 	{
-		printf("%s\n", OUT_OF_MEMORY);
+		printf("Chyba: Nepodarilo pridelit pamat\n");
 		return -1;
 	}
 	for (i; i < n; i++) {
 		printf("%.2f %.2f\n", x[i], y[i]);
 	}
 	surCSV(x, y, n); // Zapis suradnic bodov do suboru .CSV
-	char* a = uholnik_testuj_samoprieseky(x, y, n);
-	printf("\n%s\n", a);
+	char test = uholnik_testuj_samoprieseky(x, y, n);
+	if (test == SAMOPRIESEK_ANO) printf("Tento polynom ma samoprieseky!\n");
+	else  printf("Tento polynom nema samopriesekov!\n");
 
 	printf("Chcete skusit opat? 1 - ano, nieco ine - nie -> ");
 	scanf("%i", &t);
