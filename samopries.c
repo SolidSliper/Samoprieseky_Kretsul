@@ -1,12 +1,19 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#define OUT_OF_MEMORY 'a'
+#define OUT_OF_MEMORY "Chyba: Nepodarilo pridelit pamat"
 #define ANO "SAMOPRIESEK_ANO"
 #define NIE "SAMOPRIESEK_NIE"
 
 //Linka na overenie suradnic(len nie spojene zaciatocny a koncovy bod)
 //https://www.dcode.fr/points-plotter
+
+#define WHAT "what?"
+
+char* what()
+{
+	return WHAT;
+}
 
 char* uholnik_testuj_samoprieseky(float* x, float* y, unsigned int n) {
 	int i, j;
@@ -69,7 +76,7 @@ char* uholnik_testuj_samoprieseky(float* x, float* y, unsigned int n) {
 	return NIE;
 }
 
-int nuholnik(int n, float** x, float** y) { //funkcia generovania suradnic
+char* nuholnik(int n, float** x, float** y) { //funkcia generovania suradnic
 	*y = (float*)malloc(n * sizeof(float));
 	if (y == NULL)
 	{
@@ -108,16 +115,16 @@ void surCSV(float* x, float* y, int n) { // Zapis bodov do suboru, optimizacia o
 
 int main() {
 	srand(time(0));
-	int n, t, chyba;
+	int n, t;
 	float* x;
 	float* y;
 	int i = 0;
 	printf("Kolko vrcholov ma n-uholnik? -> ");
 	scanf("%i", &n); // Zapis velkosti n-uholnika
-	chyba = nuholnik(n, &x, &y);
+	char *chyba = nuholnik(n, &x, &y);
 	if (chyba == OUT_OF_MEMORY)
 	{
-		printf("Chyba: Nepodarilo pridelit pamat");
+		printf("%s\n", OUT_OF_MEMORY);
 		return -1;
 	}
 	for (i; i < n; i++) {
