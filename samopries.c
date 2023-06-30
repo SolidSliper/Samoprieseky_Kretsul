@@ -12,6 +12,7 @@
 char uholnik_testuj_samoprieseky(float* x, float* y, unsigned int n) {
 	int i, j;
 	float A1, B1, C1, A2, B2, C2, determinant;
+
 	// špeciálny prípad, keď máme stranu definovanú počiatočným a koncovým bodom
 	for (i = 1; i < n; i++) {
 		if (i + 2 == n) break;
@@ -73,6 +74,8 @@ char uholnik_testuj_samoprieseky(float* x, float* y, unsigned int n) {
 
 
 int nuholnik(int n, float** x, float** y) { //funkcia generovania suradnic
+	int i = 0;
+
 	*y = (float*)malloc(n * sizeof(float));
 	if (y == NULL)
 	{
@@ -86,7 +89,6 @@ int nuholnik(int n, float** x, float** y) { //funkcia generovania suradnic
 		free(x);
 		return OUT_OF_MEMORY;
 	}
-	int i = 0;
 	for (i; i < n; i++) {
 		(*x)[i] = rand() / (RAND_MAX / 5.5);
 		(*y)[i] = rand() / (RAND_MAX / 5.5);
@@ -105,16 +107,17 @@ int surCSV(float* x, float* y, int n) { // Zapis bodov do suboru, optimizacia ov
 		return 0;
 	}
 	else {
-		return NO_TABLE;
+		return
+			NO_TABLE;
 	}
 }
 
 int main() {
 	srand(time(0));
-	int n, t, test;
+	int n, t, test, i = 0;
 	float* x;
 	float* y;
-	int i = 0;
+
 	printf("Kolko vrcholov ma n-uholnik? -> ");
 	scanf("%i", &n); // Zapis velkosti n-uholnika
 	test = nuholnik(n, &x, &y);
@@ -126,6 +129,7 @@ int main() {
 	for (i; i < n; i++) {
 		printf("%.2f %.2f\n", x[i], y[i]);
 	}
+
 	test = surCSV(x, y, n); // Zapis suradnic bodov do suboru .CSV
 	if (test == NO_TABLE)
 	{
@@ -133,6 +137,7 @@ int main() {
 		return -1;
 	}
 	printf("Su suradnice ulozene v sur.csv\n");
+
 	test = uholnik_testuj_samoprieseky(x, y, n);
 	if (test == SAMOPRIESEK_ANO) printf("Tento polynom ma samoprieseky!\n");
 	else  printf("Tento polynom nema samopriesekov!\n");
